@@ -12,6 +12,7 @@ jobs:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/openjdk
       - image: cimg/openjdk:17.0
+      - image: circleci/mongo:4.4
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -45,8 +46,15 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
+      - run: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+             echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+             sudo apt-get update
+             sudo apt-get install -y mongodb-org-shell
+             
+      - run: dockerize -wait tcp://localhost:27017 -timeout 1m
+
       # run tests!
-      - run: gradle --scan test
+      - run: gradle test
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
