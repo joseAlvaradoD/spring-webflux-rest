@@ -44,11 +44,9 @@ jobs:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
-          
-      - run: chmod +x ./gradlew
 
       # run tests!
-      - run: ./gradlew test
+      - run: gradle --debug test
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
