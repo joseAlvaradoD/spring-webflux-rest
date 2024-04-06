@@ -1,5 +1,6 @@
 package jjad.springframework.springwebfluxrest.controller;
 
+import jjad.springframework.springwebfluxrest.domain.Category;
 import jjad.springframework.springwebfluxrest.domain.Vendor;
 import jjad.springframework.springwebfluxrest.repositories.VendorRepository;
 import org.reactivestreams.Publisher;
@@ -43,6 +44,19 @@ public class VendorController {
     public Mono<Vendor> updateCategory(@PathVariable String id, Vendor vendor){
         vendor.setId(id);
         return vendorRepository.save(vendor);
+    }
+
+    @PatchMapping({"/{id}"})
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<Vendor> patchCategory(@PathVariable String id, Vendor vendor){
+        return vendorRepository.findById(id)
+                .flatMap(foundVendor -> {
+                    if(vendor.getName() != foundVendor.getName()){
+                        vendor.setName(foundVendor.getName());
+                        return vendorRepository.save(vendor);
+                    }
+                    return Mono.just(foundVendor);
+                });
     }
 
 }

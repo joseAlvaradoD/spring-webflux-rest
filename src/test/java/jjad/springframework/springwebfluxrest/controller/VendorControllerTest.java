@@ -83,4 +83,21 @@ class VendorControllerTest {
                 .expectStatus()
                 .isOk();
     }
+
+    @Test
+    void patchCategory() {
+        BDDMockito.given(vendorRepository.findById(Mockito.anyString()))
+                .willReturn(Mono.just(Vendor.builder().name("Found Vendor").build()));
+        BDDMockito.given(vendorRepository.save(Mockito.any(Vendor.class)))
+                .willReturn(Mono.just(Vendor.builder().name("Name").build()));
+
+        Vendor vendorToUpdate = Vendor.builder().name("some name").build();
+
+        webTestClient.patch()
+                .uri(VendorController.URL_API + "/someId")
+                .bodyValue(vendorToUpdate)
+                .exchange()
+                .expectStatus()
+                .isOk();
+    }
 }
